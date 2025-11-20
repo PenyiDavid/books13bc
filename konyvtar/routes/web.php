@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BookController;
+use App\Http\Controllers\BorrowingController;
 use App\Http\Controllers\GenreController;
 use App\Models\Book;
 use Illuminate\Support\Facades\Route;
@@ -24,3 +25,10 @@ Route::get('/new-book', function() {
 });
 Route::post('/new-book', [BookController::class, 'store'])->name('books.store');
 Route::get('/books', [BookController::class, 'index'])->name('books.index');
+
+Route::get('/borrowings', [BorrowingController::class, 'index'])->name('borrowings.index');
+Route::get('/new-borrowing', function(){
+    $books = Book::whereDoesntHave('borrowings', function($query){
+        $query->whereNull('book_borrowing.back_date');
+    })->get();
+})->name('borrowings.store');
